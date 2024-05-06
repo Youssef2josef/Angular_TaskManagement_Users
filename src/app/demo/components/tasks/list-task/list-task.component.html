@@ -1,0 +1,377 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <div class="my-2">
+                        <button pButton pRipple label="New Task" icon="pi pi-plus" class="p-button-secondary mr-2"
+                            (click)="newTask()" *ngIf="permission == true"></button>
+                        <button pButton pRipple label="Inactive" icon="pi pi-fw pi-ban" class="p-button-danger"
+                            (click)="inactiveSelectedTasks()" [disabled]="!selectedTasks || !selectedTasks.length"
+                            *ngIf="permission == true"></button>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="right">
+                    <button pButton pRipple label="User to Task" icon="pi pi-user-plus" class="p-button-success mr-2"
+                        (click)="addUserToTask()"></button>
+
+                    <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help"
+                        (click)="dt.exportCSV()" *ngIf="permission == true"></button>
+                </ng-template>
+            </p-toolbar>
+
+            <p-table #dt [value]="tasks" [columns]="cols" responsiveLayout="scroll" [expandedRowKeys]="expandedRows"
+                [globalFilterFields]="['name','status','issueDate','finish','userCreation.firstName','userCreation.lastName','project.name']"
+                [rows]="5" [paginator]="true" [rowsPerPageOptions]="[5,10,20,50,100]" [showCurrentPageReport]="true"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [(selection)]="selectedTasks" selectionMode="multiple" [rowHover]="true" dataKey="id">
+                <ng-template pTemplate="caption">
+                    <h5 class="m-0">Manage Tasks</h5>
+
+                    <div class="flex table-header">
+                    </div>
+                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                        <span class="block mt-2 md:mt-0 p-input-icon-left">
+                            <button pButton pRipple label="Add project to task" icon="fa fa-folder-plus"
+                                class="p-button-help" (click)="addProjectToTask() " *ngIf="permission == true"></button>
+                        </span>
+                        <span class="block mt-2 md:mt-0 p-input-icon-right">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."
+                                class="w-full sm:w-auto" />
+                        </span>
+                    </div>
+
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 3rem">
+                        </th>
+                        <th style="width: 3rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th pSortableColumn="name">Name <p-sortIcon *ngIf="tasks" field="name"></p-sortIcon></th>
+                        <th pSortableColumn="status">Status <p-sortIcon *ngIf="tasks" field="status"></p-sortIcon></th>
+                        <th pSortableColumn="issueDate">Creation Date <p-sortIcon *ngIf="tasks"
+                                field="issueDate"></p-sortIcon></th>
+                        <th pSortableColumn="userCreation.firstName">Manager First Name <p-sortIcon *ngIf="tasks"
+                                field="userCreation.firstName"></p-sortIcon></th>
+                        <th pSortableColumn="userCreation.lastName">Manager Last Name<p-sortIcon *ngIf="tasks"
+                                field="userCreation.lastName"></p-sortIcon></th>
+
+                        <th pSortableColumn="finish">Disponibilite <p-sortIcon *ngIf="tasks"
+                                field="finish"></p-sortIcon></th>
+                        <th pSortableColumn="project.name">Project <p-sortIcon *ngIf="tasks"
+                                field="project.name"></p-sortIcon></th>
+                        <th>Other Actions</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-task let-expanded="expanded">
+                    <tr>
+                        <td>
+                            <button type="button" pButton pRipple [pRowToggler]="task"
+                                class="p-button-text p-button-rounded p-button-plain"
+                                [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                        </td>
+                        <td>
+                            <p-tableCheckbox [value]="task"></p-tableCheckbox>
+                        </td>
+                        <td style="width:16%; min-width:12rem;">
+                            <span class="p-column-title">Name</span>
+                            {{ task.name }}
+                        </td>
+                        <td style="width:10%; min-width:9rem;">
+                            <span class="p-column-title">Status</span>
+                            <span [class]="task.status ? 'p-badge p-badge-success' : 'p-badge p-badge-danger'">
+                                {{ task.status ? 'Active' : 'Inactive' }}
+                            </span>
+                        </td>
+                        <td style="width:16%; min-width:12rem;">
+                            <span class="p-column-title">Creation Date</span>
+                            {{ task.issueDate | date: 'yyyy-MM-dd' }}
+                        </td>
+                        <td style="width:25%; min-width:13rem;">
+                            <span class="p-column-title">Manager First Name</span>
+                            {{ task.userCreation.firstName }}
+                        </td>
+                        <td style="width:25%; min-width:13rem;">
+                            <span class="p-column-title">Manager Last Name</span>
+                            {{ task.userCreation.lastName }}
+                        </td>
+                        <td style="width:16%; min-width:10rem;">
+                            <span class="p-column-title">Disponibilité</span>
+                            <span [class]="!task.finish ? 'p-badge p-badge-warn' : 'p-badge p-badge-success'">
+                                {{ !task.finish ? 'En cours' : 'Terminé' }}
+                            </span>
+                        </td>
+                        <td style="width:14%; min-width:10rem;">
+                            <span class="p-column-title">Project</span>
+                            {{ task.project?.name ? task.project?.name : 'Non Found' }}
+                        </td>
+                        <td>
+                            <div class="flex">
+                                <button pButton pRipple icon="pi pi-pencil"
+                                    class="p-button-rounded p-button-success mr-2" (click)="editTask(task)"></button>
+                                <button pButton pRipple icon="pi pi-fw pi-ban"
+                                    class="p-button-rounded p-button-help mr-2" (click)="inactiveTask(task)"></button>
+                                <button pButton pRipple icon="pi pi-check"
+                                    class="p-button-rounded p-button-success mr-2"
+                                    (click)="finishTimeTask(task)"></button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="10">There are no tasks yet.</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="rowexpansion" let-task>
+                    <tr>
+                        <td colspan="11">
+                            <div class="p-3">
+                                <p-table [value]="task.managerTaskAssociations" dataKey="id" responsiveLayout="scroll">
+                                    <ng-template pTemplate="header">
+                    <tr>
+                        <th>Id</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Phone Number</th>
+                        <th>% of time working</th>
+                        <th style="width: 4rem">Role</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-association>
+                    <tr>
+                        <td>{{association.id}}</td>
+                        <td>{{association.employee?.firstName || association.manager?.firstName}}</td>
+                        <td>{{association.employee?.lastName || association.manager?.lastName}}</td>
+                        <td>{{association.employee?.email || association.manager?.email}}</td>
+                        <td>{{association.employee?.numTel || association.manager?.numTel}}</td>
+                        <td>{{association.coefficient}}</td>
+                        <td>{{association.employee ? 'Employee' : 'Manager'}}</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="10">There are no employees for this task yet.</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+        </td>
+        </tr>
+        </ng-template>
+        </p-table>
+    </div>
+
+    <p-dialog [(visible)]="addUserTaskDialog"
+        [style]="{ 'width': '450px', 'height': dialogHeight, 'overflow-y': 'auto' }" header="Asserting user to task"
+        [modal]="true" (scroll)="adjustDialogHeight($event)">
+        <ng-template pTemplate="content">
+            <div class="p-fluid">
+                <form [formGroup]="insertEmployeeForm">
+                    <div class="p-field">
+                        <label for="tasks">Type Task Name</label>
+                        <p-autoComplete id="tasks" formControlName="taskName" [suggestions]="filteredTasks" field="name"
+                            [multiple]="false" [minLength]="1" (completeMethod)="filterTasks($event)"
+                            placeholder="Type Task Name" (onChange)="onTaskChange($event)" aria-required="true">
+                            <mat-option *ngFor="let task of filteredTasks" [value]="task">
+                                {{task.name}}
+                            </mat-option>
+                        </p-autoComplete>
+                    </div>
+                    <div class="p-field">
+                        <label for="coefficient">Percentage time working</label>
+                        <p-dropdown [options]="cities" formControlName="coefficient" placeholder="Select an option"
+                            [showClear]="true"></p-dropdown>
+                    </div>
+                </form>
+
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                (click)="addUserTaskDialog = false"></button>
+            <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"
+                (click)="saveTransaction()"></button>
+        </ng-template>
+    </p-dialog>
+
+    <p-dialog [(visible)]="taskDialog" [style]="{ 'width': '450px' }" header="Task Details" [modal]="true">
+        <ng-template pTemplate="content">
+            <div class="p-fluid">
+                <form #addTaskPartOne="ngForm">
+                    <div class="p-field">
+                        <label for="email">Manager Email</label>
+                        <input id="email" pInputText type="text" [(ngModel)]="manager.email"
+                            [ngModelOptions]="{standalone: true}" disabled>
+                    </div>
+                </form>
+                <form [formGroup]="addTaskRequest">
+                    <div class="p-field">
+                        <label for="taskName">Task Name</label>
+                        <input id="taskName" pInputText type="text" formControlName="taskName" required>
+                    </div>
+                </form>
+
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                (click)="taskDialog = false"></button>
+            <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveTask()"></button>
+        </ng-template>
+    </p-dialog>
+
+    <p-dialog [(visible)]="finishTimeTaskDialog" [style]="{ 'width': '450px'}" header="Team Details" [modal]="true">
+        <ng-template pTemplate="content">
+            <div class="p-fluid">
+                <p>
+                    Are you sure you mark the finish of work for team "{{ taskTimeFinish?.name }}"?
+                </p>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                (click)="finishTimeTaskDialog = false"></button>
+            <button pButton pRipple label="Update" icon="pi pi-check" class="p-button-text"
+                (click)="confirmFinish()"></button>
+        </ng-template>
+    </p-dialog>
+
+    <p-dialog [(visible)]="inactivateTaskDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+        <p>
+            Are you sure you want to inactivate project "{{ selectedInactiveTask?.name }}"?
+        </p>
+        <div class="p-dialog-footer">
+            <button pButton type="button" label="Cancel" class="p-button-text"
+                (click)="inactivateTaskDialog = false"></button>
+            <button pButton type="button" label="Confirm" class="p-button-text"
+                (click)="confirmInactiveTaskAction()"></button>
+        </div>
+    </p-dialog>
+
+    <p-dialog [(visible)]="inactiveTasksDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+        <p>
+            Are you sure you want to continue ?
+        </p>
+        <div class="p-dialog-footer">
+            <button pButton type="button" label="Cancel" class="p-button-text"
+                (click)="inactiveTasksDialog = false"></button>
+            <button pButton type="button" label="Confirm" class="p-button-text"
+                (click)="confirmInactiveTasksAction()"></button>
+        </div>
+    </p-dialog>
+
+    <p-dialog [(visible)]="addProjectTaskDialog"
+        [style]="{ 'width': '450px', 'height': dialogHeight, 'overflow-y': 'auto' }" header="Asserting project to task"
+        [modal]="true" (scroll)="adjustDialogHeight($event)">
+        <ng-template pTemplate="content">
+            <div class="p-fluid">
+                <form [formGroup]="addProjectTask">
+                    <div class="p-field">
+                        <label for="tasks">Type Task Name</label>
+                        <p-autoComplete id="tasks" formControlName="taskName" [suggestions]="filteredTasks" field="name"
+                            [multiple]="false" [minLength]="1" (completeMethod)="filterTasks($event)"
+                            placeholder="Type Task Name" (onChange)="onTaskChange($event)" aria-required="true">
+                            <mat-option *ngFor="let task of filteredTasks" [value]="task">
+                                {{task.name}}
+                            </mat-option>
+                        </p-autoComplete>
+                    </div>
+                    <div class="p-field">
+                        <label for="projects">Type Project Name</label>
+                        <p-autoComplete id="projects" formControlName="projectName" [suggestions]="filteredProjects"
+                            field="name" [multiple]="false" [minLength]="1" (completeMethod)="filterProjects($event)"
+                            placeholder="Type Project Name" (onChange)="onProjectChange($event)" aria-required="true">
+                            <mat-option *ngFor="let project of filteredProjects" [value]="project">
+                                {{project.name}}
+                            </mat-option>
+                        </p-autoComplete>
+                    </div>
+                </form>
+
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                (click)="addProjectTaskDialog = false"></button>
+            <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"
+                (click)="submitProjectTask()"></button>
+        </ng-template>
+    </p-dialog>
+
+    <p-dialog [(visible)]="editTaskDialog" header="Changing task infos" [modal]="true"
+        [style]="{ 'width': '450px', 'height': dialogHeight, 'overflow-y': 'auto' }">
+        <ng-template pTemplate="content">
+            <div class="p-fluid">
+                <form #editProjectForm="ngForm">
+                    <div class="p-field mb-2" *ngIf="editingTask">
+                        <label for="editName">Name</label>
+                        <input id="editName" pInputText type="text" required [(ngModel)]="editingTask.name"
+                            [ngModelOptions]="{standalone: true}">
+                        <small class="ng-dirty ng-invalid" *ngIf="!editingTask.name">Name is
+                            required.</small>
+                    </div>
+                    <div class="p-field my-2" *ngIf="!editingTask">
+                        <label for="editName">Name</label>
+                        <input id="editName" pInputText type="text" placeholder="project non trouvé">
+                    </div>
+                    <div class="p-field my-2" *ngIf="editingTask">
+                        <label for="status">Status</label>
+                        <div class="formgrid grid my-2">
+                            <div class="field-radiobutton col-6">
+                                <p-radioButton id="active" name="status" [value]="true"
+                                    (ngModelChange)="onStatusChange($event)"
+                                    [(ngModel)]="editingTask.status"></p-radioButton>
+                                <label for="true">Active</label>
+                            </div>
+                            <div class="field-radiobutton col-6">
+                                <p-radioButton id="inactive" name="status" [value]="false"
+                                    (ngModelChange)="onStatusChange($event)"
+                                    [(ngModel)]="editingTask.status"></p-radioButton>
+                                <label for="false">Inactive</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-field mb-2" *ngIf="editingTask?.project">
+                        <label for="editName">Project name</label>
+                        <p-autoComplete id="projects" [(ngModel)]="editingTask?.project.name"
+                            [ngModelOptions]="{standalone: true}" [suggestions]="filteredProjects" field="name"
+                            [multiple]="false" [minLength]="1" (completeMethod)="filterProjects($event)"
+                            placeholder="Project Name" (onChange)="onProjectChange($event)"
+                            aria-required="true">
+                            <mat-option *ngFor="let project of filteredProjects" [value]="project">
+                                {{project.name}}
+                            </mat-option>
+                        </p-autoComplete>
+                        <small class="ng-dirty ng-invalid" *ngIf="!editingTask?.project.name">Name is
+                            required.</small>
+
+                    </div>
+                    <div class="p-field mb-2" *ngIf="!editingTask?.project">
+                        <label for="editName">Project name</label>
+                        <input id="editName" pInputText type="text" disabled placeholder="Still not assigned">
+                    </div>
+                </form>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                (click)="editTaskDialog = false"></button>
+            <button pButton pRipple label="Update" icon="pi pi-check" class="p-button-text"
+                (click)="updateTask()"></button>
+        </ng-template>
+    </p-dialog>
+
+</div>
+</div>

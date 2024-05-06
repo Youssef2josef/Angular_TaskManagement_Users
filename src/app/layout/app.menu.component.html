@@ -1,0 +1,11 @@
+<ul class="layout-menu">
+    <ng-container *ngFor="let item of model; let i = index;">
+        <li app-menuitem *ngIf="!item.separator" [item]="item" [index]="i" [root]="true"></li>
+        <li *ngIf="item.separator" class="menu-separator"></li>
+    </ng-container>
+    <li class="py-5 flex justify-content-center">
+        <a routerLink="">
+            <img src="assets/layout/images/company/TimeFlow.png" alt="Prime Blocks" width="200px" class="m-auto img-fluid"/>
+        </a>
+    </li>
+</ul>

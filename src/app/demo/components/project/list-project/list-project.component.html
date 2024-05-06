@@ -1,0 +1,298 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <div class="my-2">
+                        <button pButton pRipple label="New Project" icon="pi pi-plus" class="p-button-success mr-2"
+                            (click)="openNew()" *ngIf="permission == true"></button>
+                        <button pButton pRipple label="Inactive" icon="pi pi-trash" class="p-button-danger"
+                            (click)="inactivateSelectedProjects()"
+                            [disabled]="!selectedProjects || !selectedProjects.length"
+                            *ngIf="permission == true"></button>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="right">
+                    <button pButton pRipple label="Project to team" icon="pi pi-plus"
+                        class="p-button-secondary mr-2" (click)="insertProjectToTeam()"
+                        *ngIf="permission == true"></button>
+                    <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help"
+                        (click)="dt.exportCSV()"></button>
+                </ng-template>
+            </p-toolbar>
+
+            <p-table #dt [value]="allProjects" styleClass="p-datatable-gridlines" [columns]="cols" responsiveLayout="scroll"
+                [globalFilterFields]="['name','status','creationTime','disponibilité','startTime','finishTime','estimateFinishTime']"
+                [rows]="5" [paginator]="true" [rowsPerPageOptions]="[5,10,20,30]" [showCurrentPageReport]="true"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [(selection)]="selectedProjects" selectionMode="multiple" [rowHover]="true" dataKey="id">
+                <ng-template pTemplate="caption">
+                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                        <h5 class="m-0">Projects</h5>
+                        <span class="block mt-2 md:mt-0 p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."
+                                class="w-full sm:w-auto" />
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 3rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th pSortableColumn="name">Name <p-sortIcon *ngIf="allProjects" field="name"></p-sortIcon></th>
+                        <th pSortableColumn="status">Status <p-sortIcon *ngIf="allProjects" field="status"></p-sortIcon></th>
+                        <th pSortableColumn="creationTime">Creation Date <p-sortIcon *ngIf="allProjects" field="creationTime"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="finishTime">Finish Date <p-sortIcon *ngIf="allProjects" field="finishTime"></p-sortIcon></th>
+                        <th pSortableColumn="startTime">Start Time <p-sortIcon *ngIf="allProjects" field="startTime"></p-sortIcon></th>
+                        <th pSortableColumn="estimateFinishTime">Estimated Finish <p-sortIcon *ngIf="allProjects"
+                                field="estimateFinishTime"></p-sortIcon></th>
+                        <th *ngIf="permission == true">Actions</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-project>
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="project"></p-tableCheckbox>
+                        </td>
+                        <td style="width:17%; min-width:10rem;">
+                            <span class="p-column-title">Name</span>
+                            {{ project.name }}
+                        </td>
+                        <td style="width:14%; min-width:8rem;">
+                            <span class="p-column-title">Status</span>
+                            <span [class]="project.status ? 'p-badge p-badge-success' : 'p-badge p-badge-danger'">
+                                {{ project.status ? 'Active' : 'Inactive'}}
+                            </span>
+                        </td>
+                        <td style="width:15%; min-width:10rem;">
+                            <span class="p-column-title">Creation Date</span>
+                            <ng-container *ngIf="project.creationTime; else nonTermine">{{project.creationTime | date:
+                                'yyyy-MM-dd'}}</ng-container>
+                            <ng-template #nonTermine>Not Found</ng-template>
+                        </td>
+                        <td style="width:15%; min-width:10rem;">
+                            <span class="p-column-title">Finish Date</span>
+                            <ng-container *ngIf="project.finishTime; else nonTermine">{{ project.finishTime | date:
+                                'yyyy-MM-dd' }}</ng-container>
+                            <ng-template #nonTermine>Not Found</ng-template>
+                        </td>
+                        <td style="width:15%; min-width:10rem;">
+                            <span class="p-column-title">Start Time</span>
+                            <ng-container>{{ project.startTime ? project.startTime : 'Not Found' }}</ng-container>
+                        </td>
+                        <td style="width:15%; min-width:12rem;">
+                            <span class="p-column-title">Estimated Finish</span>
+                            <ng-container>{{ project.estimateFinishTime ? project.estimateFinishTime : 'Not Found'
+                                }}</ng-container>
+                        </td>
+                        <td *ngIf="permission == true">
+                            <div class="flex">
+                                <button pButton pRipple icon="pi pi-pencil"
+                                    class="p-button-rounded p-button-success mr-2"
+                                    (click)="editProject(project)"></button>
+                                <button pButton pRipple icon="pi pi-fw pi-ban" class="p-button-rounded p-button-help mr-2"
+                                    (click)="inactivateProject(project)"></button>
+                                <button pButton pRipple icon="pi pi-check"
+                                    class="p-button-rounded p-button-success mr-2"
+                                    (click)="finishTimeProject(project)"></button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="10">There are no projects yet.</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+        <p-dialog [(visible)]="projectDialog" [style]="{width: '450px'}" header="Project Details" [modal]="true"
+            class="p-fluid">
+            <ng-template pTemplate="content">
+                <div class="p-fluid">
+                    <form [formGroup]="addProject">
+                        <div class="p-field">
+                            <label for="Name">Project Name</label>
+                            <input id="firstName" pInputText type="text" required formControlName="name">
+                        </div>
+                        <div class="p-field">
+                            <label for="editName">Start Time</label>
+                            <input id="editName" pInputText type="date" formControlName="startTime" required>
+                        </div>
+                        <div class="p-field">
+                            <label for="editName">Estimate Finish Time</label>
+                            <input id="editName" pInputText type="date" formControlName="finishTime" required>
+
+                        </div>
+                    </form>
+                </div>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                    (click)="hideDialog()"></button>
+                <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"
+                    (click)="saveProject()"></button>
+            </ng-template>
+        </p-dialog>
+
+        <p-dialog [(visible)]="editProjectsDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+            <ng-template pTemplate="content">
+                <div class="p-fluid">
+                    <form #editProjectForm="ngForm">
+                        <div class="p-field mb-2" *ngIf="findedProject">
+                            <label for="editName">Name</label>
+                            <input id="editName" pInputText type="text" required [(ngModel)]="findedProject.name"
+                                [ngModelOptions]="{standalone: true}">
+                            <small class="ng-dirty ng-invalid" *ngIf="submittedEdit && !findedProject.name">Name is
+                                required.</small>
+                        </div>
+                        <div class="p-field my-2" *ngIf="!findedProject">
+                            <label for="editName">Name</label>
+                            <input id="editName" pInputText type="text" placeholder="project non trouvé">
+                        </div>
+                        <div class="p-field my-2" *ngIf="findedProject">
+                            <label for="status">Status</label>
+                            <div class="formgrid grid my-2">
+                                <div class="field-radiobutton col-6">
+                                    <p-radioButton id="active" name="status" [value]="true"
+                                        (ngModelChange)="onStatusChange($event)"
+                                        [(ngModel)]="findedProject.status"></p-radioButton>
+                                    <label for="true">Active</label>
+                                </div>
+                                <div class="field-radiobutton col-6">
+                                    <p-radioButton id="inactive" name="status" [value]="false"
+                                        (ngModelChange)="onStatusChange($event)"
+                                        [(ngModel)]="findedProject.status"></p-radioButton>
+                                    <label for="false">Inactive</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-field mb-2" *ngIf="findedProject?.creationTime">
+                            <label for="editName">Creation Time</label>
+                            <input id="editName" pInputText type="datetime" disabled
+                                [(ngModel)]="findedProject.creationTime" [ngModelOptions]="{standalone: true}">
+                        </div>
+                        <div class="p-field mb-2" *ngIf="!findedProject?.creationTime">
+                            <label for="editName">Creation Time</label>
+                            <input id="editName" pInputText type="text" disabled placeholder="Still not created">
+                        </div>
+                        <div class="p-field mb-2" *ngIf="findedProject">
+                            <label for="editName">Start Time</label>
+                            <input id="editName" pInputText type="date" [(ngModel)]="findedProject.startTime"
+                                [ngModelOptions]="{standalone: true}">
+                        </div>
+                        <div class="p-field mb-2" *ngIf="findedProject">
+                            <label for="editName">Estimatied Finish Time</label>
+                            <input id="editName" pInputText type="date" [(ngModel)]="findedProject.estimateFinishTime"
+                                [ngModelOptions]="{standalone: true}">
+                        </div>
+                        <div class="p-field mb-2" *ngIf="findedProject?.finishTime">
+                            <label for="editName">Finish Time</label>
+                            <input id="editName" pInputText type="datetime" disabled
+                                [(ngModel)]="findedProject.finishTime" [ngModelOptions]="{standalone: true}">
+                        </div>
+                        <div class="p-field mb-2" *ngIf="!findedProject?.finishTime">
+                            <label for="editName">Finish Time</label>
+                            <input id="editName" pInputText type="datetime" disabled placeholder="Not finished">
+                        </div>
+                    </form>
+                </div>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                    (click)="hideEditDialog()"></button>
+                <button pButton pRipple label="Update" icon="pi pi-check" class="p-button-text"
+                    (click)="updateProject()"></button>
+            </ng-template>
+        </p-dialog>
+
+        <p-dialog [(visible)]="finishTimeProjectDialog" [style]="{ 'width': '450px'}" header="Team Details" [modal]="true">
+            <ng-template pTemplate="content">
+                <div class="p-fluid">
+                    <p>
+                        Are you sure you mark the finish of work for team "{{ projectTimeFinish?.name }}"?
+                    </p>
+                </div>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                    (click)="finishTimeProjectDialog = false"></button>
+                <button pButton pRipple label="Update" icon="pi pi-check" class="p-button-text"
+                    (click)="confirmFinish()"></button>
+            </ng-template>
+        </p-dialog>
+
+        <p-dialog [(visible)]="inactivateProjectDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+            <p>
+                Are you sure you want to inactivate project "{{ inactiveProjectInfo?.name }}"?
+            </p>
+            <div class="p-dialog-footer">
+                <button pButton type="button" label="Cancel" class="p-button-text"
+                    (click)="inactivateProjectDialog = false"></button>
+                <button pButton type="button" label="Confirm" class="p-button-text"
+                    (click)="confirmInactiveProjectAction()"></button>
+            </div>
+        </p-dialog>
+
+        <p-dialog [(visible)]="inactivateProjectsDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+            <p>
+                Are you sure you want to continue ?
+            </p>
+            <div class="p-dialog-footer">
+                <button pButton type="button" label="Cancel" class="p-button-text"
+                    (click)="inactivateProjectsDialog = false"></button>
+                <button pButton type="button" label="Confirm" class="p-button-text"
+                    (click)="confirmInactiveProjectsAction()"></button>
+            </div>
+        </p-dialog>
+
+        <p-dialog [(visible)]="insertProjectDialog"
+            [style]="{ 'width': '450px', 'height': dialogHeight, 'overflow-y': 'auto' }"
+            header="Insertion Project to Team" [modal]="true" (scroll)="adjustDialogHeight($event)">
+            <ng-template pTemplate="content">
+                <div class="p-fluid">
+                    <form [formGroup]="insertProjectForm">
+                        <div class="p-field">
+                            <label for="customEmployee">Type Project Name</label>
+                            <p-autoComplete id="projects" formControlName="name" [suggestions]="filteredProjects"
+                                field="name" [multiple]="false" [minLength]="1"
+                                (completeMethod)="filterProjects($event)" placeholder="Type Project Name"
+                                (onChange)="onProjectChange($event)" aria-required="true">
+                                <mat-option *ngFor="let project of filteredProjects" [value]="project">
+                                    {{project.name}}
+                                </mat-option>
+                            </p-autoComplete>
+                        </div>
+                        <div class="p-field">
+                            <label for="teams">Type Team Name</label>
+                            <p-autoComplete id="teams" formControlName="teamName" [suggestions]="filteredTeams"
+                                field="name" [multiple]="true" [minLength]="1" (completeMethod)="filterTeams($event)"
+                                placeholder="Type Team Name" (onChange)="onTeamChange($event)" aria-required="true">
+                                <mat-option *ngFor="let team of filteredTeams" [value]="team">
+                                    {{team.name}}
+                                </mat-option>
+                            </p-autoComplete>
+                        </div>
+                    </form>
+
+                </div>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                    (click)="insertProjectDialog = false"></button>
+                <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"
+                    (click)="saveInsertion()"></button>
+            </ng-template>
+        </p-dialog>
+    </div>
+</div>

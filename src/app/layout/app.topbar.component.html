@@ -1,0 +1,61 @@
+<div class="layout-topbar">
+    <a class="layout-topbar-logo" href="https://itserv.tn/">
+        <img src="assets/layout/images/company/itserv.png" alt="logo" height="auto" width="120px">
+    </a>
+
+    <button #menubutton class="p-link layout-menu-button layout-topbar-button" (click)="layoutService.onMenuToggle()">
+        <i class="pi pi-bars"></i>
+    </button>
+
+    <button #topbarmenubutton class="p-link layout-topbar-menu-button layout-topbar-button" (click)="layoutService.showProfileSidebar()">
+        <i class="pi pi-ellipsis-v"></i>
+    </button>
+
+    <div #topbarmenu class="layout-topbar-menu" [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
+      <input matInput [matDatepicker]="picker" placeholder="{{ placeholderDate }}" readonly>
+      <button class="p-link layout-topbar-button" (click)="openDatePicker()">
+            <i class="pi pi-calendar">
+            </i>
+            <span>Calendar</span>
+            <mat-datepicker #picker></mat-datepicker>
+        </button>
+        <div class="flex align-items-center">
+          <button class="p-link layout-topbar-button">
+            <i class="pi pi-user"></i>
+            <span>Profile</span>
+        </button>
+        <span>
+          {{ manager?.firstName || employee?.firstName }}
+          {{ manager?.lastName || employee?.lastName }}
+        </span>
+        </div>
+        
+        <button class="p-link layout-topbar-button" [matMenuTriggerFor]="menu">
+            <i class="pi pi-cog"></i>
+            <span>Settings</span>
+        </button>
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item routerLink="/dashboard">
+              <mat-icon>person</mat-icon>
+              <span>
+                {{ manager?.firstName || employee?.firstName }}
+                {{ manager?.lastName || employee?.lastName }}
+              </span>
+            </button>
+            <mat-divider></mat-divider>
+            <button mat-menu-item routerLink="/dashboard/project/list">
+              <mat-icon>assignment</mat-icon>
+              <span>Projects</span>
+            </button>
+            <button mat-menu-item [routerLink]="link">
+              <mat-icon>groups</mat-icon>
+              <span>Teams</span>
+            </button>
+            <mat-divider></mat-divider>
+            <button mat-menu-item (click)="logout()">
+                <mat-icon color="warn">logout</mat-icon>
+                <span>Logout</span>
+            </button>
+        </mat-menu>
+    </div>
+</div>

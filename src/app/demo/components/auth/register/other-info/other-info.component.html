@@ -1,0 +1,33 @@
+<div class="flex flex-column align-items-center justify-content-center h-full py-5 px-3">
+    <i class="pi pi-fw pi-money-bill mr-2 text-2xl"></i>
+    <p class="mt-5 text-center text-lg">Backup Info</p>
+    <div class="col-12 lg:col-8">
+        <div class="card">
+            <div class="p-card-header flex justify-content-center align-items-center mb-5">
+                <button pButton pRipple type="button" icon="pi pi-user-plus"
+                    class="p-button-rounded p-button-info"></button>
+                <span class="ml-3">Register</span>
+            </div>
+            <form [formGroup]="thirdFormGroup">
+                <div class="field grid">
+                    <label for="email" class="col-fixed w-13rem">Email Recuperation</label>
+                    <mat-form-field class="example-full-width">
+                        <mat-label>Enter your email</mat-label>
+                        <input matInput placeholder="Ex. Alex@gmail.com" formControlName="emailRecuperation" required>
+                        <mat-error *ngIf="thirdFormGroup.controls['emailRecuperation'].hasError('required') ||
+                        thirdFormGroup.controls['emailRecuperation'].hasError('email')
+                        "><b><i>{{getErrorEmailRec()}}</i></b></mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="flex justify-content-end mt-4">
+					<span class="p-buttonset">
+						<button pButton class="p-button-raised p-button-danger" pRipple label="Cancel" icon="pi pi-times"></button>
+                        <button pButton pRipple label="Proceed" icon="pi pi-arrow-right" (click)="proceed()"
+                        [disabled]="thirdFormGroup.controls['emailRecuperation'].hasError('required') ||
+                        thirdFormGroup.controls['emailRecuperation'].hasError('email')"></button>
+					</span>
+				</div>
+            </form>
+        </div>
+    </div>
+</div>

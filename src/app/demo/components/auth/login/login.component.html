@@ -1,0 +1,234 @@
+<div style="
+    background-image: url('assets/layout/images/company/entreprise3.png');
+    background-size: 100%;"
+    class="surface-0 flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
+    <div class="grid justify-content-center p-2 lg:p-0" style="min-width:80%">
+        <div class="col-12 mt-5 xl:mt-0 text-center">
+            <img src="assets/layout/images/company/itserv.png" alt="IT SERV logo" class="mb-5"
+                style="width:150px; height:60px;">
+        </div>
+        <div class="col-12 xl:col-6"
+            style="border-radius:56px; padding:0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%);">
+            <div class="h-full w-full m-0 py-7 px-4"
+                style="border-radius:53px; background: linear-gradient(180deg, var(--surface-50) 38.9%, var(--surface-0));">
+                <div class="text-center mb-5">
+                    <img src="assets/demo/images/avatar/onyamalimba.png" alt="Image" height="50" class="mb-3">
+                    <div class="text-900 text-3xl font-medium mb-3">Welcome Dear User!</div>
+                    <span class="text-600 font-medium">Sign in to continue</span>
+                </div>
+                <div class="w-full md:w-10 mx-auto" *ngIf="navigation == false">
+                    <form [formGroup]="loginForm" class="w-full md:w-10 mx-auto">
+                        <mat-form-field class="example-full-width">
+                            <mat-label>Enter your email</mat-label>
+                            <input matInput placeholder="pat@gmail.com" formControlName="email" required>
+                            <mat-error *ngIf="loginForm.controls['email'].hasError('required') ||
+                            loginForm.controls['email'].hasError('email')
+                            "><b><i>{{getErrorMessage()}}</i></b></mat-error>
+                        </mat-form-field>
+                        <mat-form-field class="example-full-width">
+                            <mat-label>Enter your password</mat-label>
+                            <input matInput placeholder="example: Pl8k*O9*" [type]="hide ? 'password' : 'text'"
+                                formControlName="password" required>
+                            <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+                                [attr.aria-pressed]="hide">
+                                <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                            </button>
+                            <mat-error *ngIf="loginForm.controls['password'].hasError('required') ||
+                            loginForm.controls['password'].hasError('maxLength') ||
+                            loginForm.controls['password'].hasError('minLength') ||
+                            loginForm.controls['password'].hasError('pattern')
+                            "><b><i>{{getErrorMessagePassword()}}</i></b></mat-error>
+                        </mat-form-field>
+                        <div class="flex align-items-center justify-content-between mb-5">
+                            <mat-radio-group formControlName="userType">
+                                <mat-radio-button class="mr-2" value="employee">Employee</mat-radio-button>
+                                <mat-radio-button class="mx-2" value="manager">Manager</mat-radio-button>
+                            </mat-radio-group>
+                        </div>
+
+                        <div class="flex align-items-center justify-content-between mb-5">
+                            <div class="flex align-items-center">
+                                <mat-checkbox formControlName="option">Multi-Auth By QR Code</mat-checkbox>
+                            </div>
+                            <a class="font-medium no-underline ml-2 text-right cursor-pointer"
+                                style="color: var(--primary-color)" (click)="showForgotPasswordDialog()">
+                                Forgot password?
+                            </a>
+                        </div>
+                        <div class="flex align-items-center justify-content-between mb-5">
+                            <button class="button-login" mat-flat-button color="primary" type="submit"
+                                (click)="login()">
+                                Login
+                            </button>
+                            <a class="font-medium no-underline ml-2 text-right cursor-pointer"
+                                style="color: var(--primary-color)" (click)="newDialog()">
+                                Register
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+                <p-dialog [(visible)]="dialogState" [style]="{width: '450px'}" header="Access Details" [modal]="true"
+                    class="p-fluid">
+                    <ng-template pTemplate="content">
+                        <div class="p-fluid">
+                            <form [formGroup]="redirection">
+                                <div class="p-field my-2">
+                                    <label for="permission">Permission</label>
+                                    <div class="formgrid grid my-2">
+                                        <mat-radio-group formControlName="userType">
+                                            <mat-radio-button class="mx-2" value="employee">Employee</mat-radio-button>
+                                            <mat-radio-button class="mx-2" value="manager">Manager</mat-radio-button>
+                                        </mat-radio-group>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </ng-template>
+
+                    <ng-template pTemplate="footer">
+                        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                            (click)="hideDialog()"></button>
+                        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"
+                            (click)="save()"></button>
+                    </ng-template>
+                </p-dialog>
+
+                <p-dialog [(visible)]="recoveryDialog" [style]="{width: '450px'}" header="Access Details" [modal]="true"
+                    class="p-fluid">
+                    <ng-template pTemplate="content">
+                        <div class="p-fluid" *ngIf="goCondition == false && access == false">
+                            <form [formGroup]="passwordForgotton">
+                                <div class="p-field my-2">
+                                    <label for="permission">Your category ?</label>
+                                    <div class="formgrid grid my-2">
+                                        <mat-radio-group formControlName="userType">
+                                            <mat-radio-button class="mx-2" value="employee">Employee</mat-radio-button>
+                                            <mat-radio-button class="mx-2" value="manager">Manager</mat-radio-button>
+                                        </mat-radio-group>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="p-fluid" *ngIf="goCondition == true && access == false">
+                            <form [formGroup]="recoveryFormOptions">
+                                <div class="p-field my-2">
+                                    <label for="permission">Your option ?</label>
+                                    <div class="formgrid grid my-2">
+                                        <mat-radio-group formControlName="userType">
+                                            <mat-radio-button class="mx-2" value="email">Email</mat-radio-button>
+                                            <mat-radio-button class="mx-2" value="phone">Phone</mat-radio-button>
+                                        </mat-radio-group>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="p-fluid" *ngIf="option == 'email' && access == true">
+                            <form [formGroup]="recoveryEmailForm">
+                                <div class="p-field my-2">
+                                    <label for="email">Your email</label>
+                                    <div class="formgrid grid my-2">
+                                        <span class="p-input-icon-left">
+                                            <i class="pi pi-user"></i>
+                                            <input type="text" pInputText placeholder="pat@gmail.com"
+                                                formControlName="email" required />
+                                        </span>
+                                    </div>
+                                    <label for="emailRec">Your recuperation email</label>
+                                    <div class="formgrid grid my-2">
+                                        <span class="p-input-icon-left">
+                                            <i class="pi pi-user"></i>
+                                            <input type="text" pInputText placeholder="pat@gmail.com"
+                                                formControlName="emailRec" required />
+                                        </span>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="p-fluid" *ngIf="option == 'phone' && access == true && key == false">
+                            <form [formGroup]="recoveryPhoneForm">
+                                <div class="p-field my-2">
+                                    <label for="phoneNumber">Your Phone Number</label>
+                                    <div class="formgrid grid my-2">
+                                        <span class="p-input-icon-left">
+                                            <i class="pi pi-phone"></i>
+                                            <input type="text" pInputText placeholder="+216 - - - - - - - -"
+                                                formControlName="phoneNumber" required />
+                                        </span>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div *ngIf="option == 'phone' && access == true && key == true" class="p-fluid">
+                            <form [formGroup]="phoneKeyVerification" class="justify-content-center">
+                                <ng-otp-input formControlName="keyCode" (onInputChange)="onOtpChangeKey($event)"
+                                    [config]="{length:6}"></ng-otp-input>
+                                <br>
+                                <div class="d-flex align-items-center">
+                                    <button class="button-login" mat-flat-button color="primary" type="submit"
+                                        [disabled]="x==true">
+                                        {{ this.inputDigitLeft }}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </ng-template>
+
+                    <ng-template pTemplate="footer">
+                        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                            (click)="hideForgotPasswordDialog()"></button>
+                        <button pButton pRipple label="Continue" icon="pi pi-check" class="p-button-text"
+                            (click)="saveStep()" *ngIf="goCondition == false && access == false"></button>
+                        <button pButton pRipple label="Choose" icon="pi pi-check" class="p-button-text"
+                            (click)="choose()" *ngIf="goCondition == true && access == false"></button>
+                        <button pButton pRipple label="Continue" icon="pi pi-check" class="p-button-text"
+                            (click)="stepEmail()" *ngIf="option == 'email' && access == true"></button>
+                        <button pButton pRipple label="Continue" icon="pi pi-check" class="p-button-text"
+                            (click)="stepPhone()" *ngIf="option == 'phone' && access == true"></button>
+                    </ng-template>
+                </p-dialog>
+
+                <div class="w-full md:w-10 mx-auto" *ngIf="navigation == true && QrCode == false">
+                    <form [formGroup]="keyVerification" class="justify-content-center"
+                        *ngIf="navigation == true && QrCode == false">
+                        <ng-otp-input formControlName="key" (onInputChange)="onOtpChange($event)"
+                            [config]="{length:6}"></ng-otp-input>
+                        <mat-error *ngIf="keyVerification.controls['key'].hasError('required')
+                            "><b><i>{{getErrorMessageKey()}}</i></b>
+                        </mat-error>
+                        <br>
+                        <div class="d-flex align-items-center jutify-content-center">
+                            <button class="button-login" mat-flat-button color="primary" type="submit"
+                                [disabled]="x==true">
+                                {{ this.inputDigitLeft }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div *ngIf="navigation == true && QrCode == true" class="container-ng-input">
+                    <div class="d-flex justify-content-center">
+                        <img [src]="QrCodeUrl" alt="QR Code" height="150px" width="150px">
+                    </div>
+                    <div *ngIf="navigation == true && QrCode == true" class="container-ng-input">
+                        <form [formGroup]="qrCodeVerification" class="justify-content-center"
+                            *ngIf="navigation == true && QrCode == true">
+                            <ng-otp-input formControlName="code" (onInputChange)="onOtpChange($event)"
+                                [config]="{length:6}"></ng-otp-input>
+                            <mat-error *ngIf="qrCodeVerification.controls['code'].hasError('required')
+                            "><b><i>{{getErrorMessageQrCode()}}</i></b>
+                            </mat-error>
+                            <br>
+                            <div class="d-flex align-items-center">
+                                <button class="button-login" mat-flat-button color="primary" type="submit"
+                                    [disabled]="x==true">
+                                    {{ this.inputDigitLeft }}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

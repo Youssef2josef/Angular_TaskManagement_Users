@@ -1,0 +1,59 @@
+<div class="flex flex-column align-items-center justify-content-center h-full py-5 px-3">
+    <i class="pi pi-fw pi-user mr-2 text-2xl"></i>
+    <p class="mt-5 text-center text-lg">Last Step Info</p>
+    <div class="col-12 lg:col-8">
+        <div class="card">
+            <div class="p-card-header flex justify-content-center align-items-center mb-5">
+                <button pButton pRipple type="button" icon="pi pi-user-plus"
+                    class="p-button-rounded p-button-info"></button>
+                <span class="ml-3">Register</span>
+            </div>
+            <form [formGroup]="forthFormGroup">
+                <div class="field grid">
+                    <label for="roles" class="col-fixed w-9rem">Roles</label>
+                    <div class="col flex">
+                        <mat-form-field class="example-full-width">
+                            <mat-label>Roles</mat-label>
+                            <mat-select formControlName="role">
+                                <mat-option *ngFor="let roleArray of roles" [value]="roleArray">{{ roleArray }}</mat-option>
+                            </mat-select>
+                            <mat-hint>You selected: {{forthFormGroup.value.role}}</mat-hint>
+                            <mat-error *ngIf="forthFormGroup.controls['role'].hasError('required')">
+                                {{ getErrorRole() }}
+                            </mat-error>
+                          </mat-form-field>
+                    </div>
+                </div>
+                <div class="p-fluid p-formgrid grid">
+                    <div class="field col-12">
+                        <label htmlFor="address">Address</label>
+                        <input formControlName="address" pInputTextarea id="address" rows="4" />
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <label htmlFor="city">City</label>
+                        <input formControlName="city" pInputText id="city" type="text" />
+                    </div>
+                    <div class="field col-12 md:col-3">
+                        <label htmlFor="state">State</label>
+                        <input formControlName="state" pInputText id="state" type="text" />
+                    </div>
+                    <div class="field col-12 md:col-3">
+                        <label htmlFor="zip">Zip</label>
+                        <input formControlName="zip" pInputText id="zip" type="text" />
+                    </div>
+                </div>
+                <div class="flex justify-content-end mt-4">
+                    <span class="p-buttonset">
+                        <button class="p-button-raised p-button-danger" pButton pRipple label="Cancel" icon="pi pi-times" (click)="return()"></button>
+                        <button pButton pRipple label="Proceed" icon="pi pi-arrow-right" (click)="proceed()"
+                        [disabled]="forthFormGroup.controls['role'].hasError('required') ||
+                        forthFormGroup.controls['address'].hasError('required') ||
+                        forthFormGroup.controls['city'].hasError('required') ||
+                        forthFormGroup.controls['state'].hasError('required') ||
+                        forthFormGroup.controls['zip'].hasError('required')"></button>
+                    </span>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

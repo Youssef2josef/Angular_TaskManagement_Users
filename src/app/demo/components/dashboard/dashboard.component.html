@@ -1,0 +1,164 @@
+<div class="grid">
+    <div class="col-12 lg:col-6 xl:col-6" *ngIf="roleManager == 'true' && !roleEmployee">
+        <div class="card mb-0">
+            <div class="flex justify-content-between mb-3">
+                <div>
+                    <span class="block text-500 font-medium mb-3">Teams</span>
+                    <div class="text- font-medium text-xl">{{teams?.length}} Your total teams</div>
+                </div>
+                <div class="flex align-items-center justify-content-center bg-blue-100 border-round"
+                    [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
+                    <i class="pi pi-users text-blue-500 text-xl"></i>
+                </div>
+            </div>
+            <span class="text-green-500 font-medium"><b>You added </b>{{recentTeams?.length}} </span>
+            <span class="text-500">new teams</span>
+        </div>
+    </div>
+    <div class="col-12 lg:col-6 xl:col-6" *ngIf="roleEmployee == 'true' && !roleManager">
+        <div class="card mb-0">
+            <div class="flex justify-content-between mb-3">
+                <div>
+                    <span class="block text-500 font-medium mb-3">Teams</span>
+                    <div class="text-900 font-medium text-xl">{{teamsEmployee?.length}}</div>
+                </div>
+                <div class="flex align-items-center justify-content-center bg-blue-100 border-round"
+                    [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
+                    <i class="pi pi-users text-blue-500 text-xl"></i>
+                </div>
+            </div>
+            <span class="text-green-500 font-medium"><b>You have </b>{{teamsEmployee?.length}} </span>
+            <span class="text-500"> teams</span>
+        </div>
+    </div>
+    <div class="col-12 lg:col-6 xl:col-6">
+        <div class="card mb-0">
+            <div class="flex justify-content-between mb-3">
+                <div>
+                    <span class="block text-500 font-medium mb-3">Projects</span>
+                    <div class="text-900 font-medium text-xl">$2.100</div>
+                </div>
+                <div class="flex align-items-center justify-content-center bg-orange-100 border-round"
+                    [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
+                    <i class="pi pi-folder-open text-cyan-500 text-xl"></i>
+                </div>
+            </div>
+            <span class="text-green-500 font-medium">%52+ </span>
+            <span class="text-500">since last week</span>
+        </div>
+    </div>
+    <div class="col-12 lg:col-6 xl:col-6">
+        <div class="card mb-0">
+            <div class="flex justify-content-between mb-3">
+                <div>
+                    <span class="block text-500 font-medium mb-3">Tasks</span>
+                    <div class="text-900 font-medium text-xl">28441</div>
+                </div>
+                <div class="flex align-items-center justify-content-center bg-cyan-100 border-round"
+                    [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
+                    <i class="pi pi-check-circle text-green-500 text-xl"></i>
+                </div>
+            </div>
+            <span class="text-green-500 font-medium">520 </span>
+            <span class="text-500">newly registered</span>
+        </div>
+    </div>
+    <div class="col-12 lg:col-6 xl:col-6">
+        <div class="card mb-0">
+            <div class="flex justify-content-between mb-3">
+                <div>
+                    <span class="block text-500 font-medium mb-3">Tasks</span>
+                    <div class="text-900 font-medium text-xl">28441</div>
+                </div>
+                <div class="flex align-items-center justify-content-center bg-cyan-100 border-round"
+                    [ngStyle]="{width: '2.5rem', height: '2.5rem'}">
+                    <i class="pi pi-check-circle text-green-500 text-xl"></i>
+                </div>
+            </div>
+            <span class="text-green-500 font-medium">520 </span>
+            <span class="text-500">newly registered</span>
+        </div>
+    </div>
+
+    <div class="col-12 lg:col-11 xl:col-11" *ngIf="roleManager == 'true' && !roleEmployee">
+        <div class="card">
+            <h5>Your Recent Teams</h5>
+            <p-table [value]="recentTeams" [paginator]="true" [rows]="5" responsiveLayout="scroll">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
+                        <th pSortableColumn="creationDate">Creation Date <p-sortIcon field="creationDate"></p-sortIcon>
+                        </th>
+                        <th>Head</th>
+                        <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
+                        <th pSortableColumn="projectModel.name">Project <p-sortIcon field="projectModel.name"></p-sortIcon></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-team>
+                    <tr>
+                        <td>{{ team.name }}</td>
+                        <td>{{ team.creationDate | date:'dd-MM-yyyy' }}</td>
+                        <td>{{ team.head.firstName }} {{ team.head.lastName }}</td>
+                        <td>
+                            <span [class]="team.status ? 'p-badge p-badge-success' : 'p-badge p-badge-danger'">
+                                {{ team.status ? 'Active' : 'Inactive' }}
+                            </span>
+                        </td>
+                        <td>
+                            {{ team.projectModel?.name ? team.projectModel?.name : 'Non Found' }}
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+
+    <div class="col-12 lg:col-11 xl:col-11" *ngIf="!roleManager && roleEmployee == 'true'">
+        <div class="card">
+            <div class="flex justify-content-between align-items-center">
+                <h5>Your Recent Teams</h5>
+                <span class="p-badge p-badge-primary ml-auto">Your 4 latest teams </span>
+            </div>
+            <p-table [value]="recentTeamsEmployee" [paginator]="true" [rows]="5" responsiveLayout="scroll">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="teamResponseModel.name">Name <p-sortIcon field="teamResponseModel.name"></p-sortIcon></th>
+                        <th pSortableColumn="teamResponseModel.creationDate">Creation Date 
+                            <p-sortIcon field="teamResponseModel.creationDate"></p-sortIcon>
+                        </th>
+                        <th>Head</th>
+                        <th pSortableColumn="teamResponseModel.status">Status 
+                            <p-sortIcon field="teamResponseModel.status"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="teamResponseModel.projectModel.name">Project 
+                            <p-sortIcon field="teamResponseModel.projectModel.name"></p-sortIcon>
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-team>
+                    <tr>
+                        <td>{{ team.teamResponseModel?.name }}</td>
+                        <td>{{ team.teamResponseModel?.creationDate | date:'dd-MM-yyyy' }}</td>
+                        <td>{{ team.teamResponseModel.head.firstName }} {{ team.teamResponseModel.head.lastName }}</td>
+                        <td>
+                            <span [class]="team.teamResponseModel.status ? 'p-badge p-badge-success' : 'p-badge p-badge-danger'">
+                                {{ team.teamResponseModel.status ? 'Active' : 'Inactive' }}
+                            </span>
+                        </td>
+                        <td>
+                            {{ team.teamResponseModel.projectModel?.name ? team.teamResponseModel.projectModel?.name : 'Non Found' }}
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+
+    <div class="col-12 lg:col-10 xl:col-10">
+        <div class="card">
+            <h5>Top 5 Active & Popular Teams</h5>
+            <p-chart type="bar" [data]="chartData" [options]="chartOptions"></p-chart>
+        </div>
+        
+    </div>
+</div>

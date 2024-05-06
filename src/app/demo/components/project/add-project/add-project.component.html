@@ -1,0 +1,19 @@
+<div class="grid p-fluid">
+    <div class="col-12 lg:col-6">
+        <div class="card flex flex-column align-items-center">
+            <h5>Project status</h5>
+            <p-chart type="pie" [data]="pieChartData" [options]="pieChartOptions"></p-chart>
+        </div>
+        <div class="card">
+            <h5>Number of Projects Started per Month</h5>
+            <p-chart type="line" [data]="linearChartData" [options]="linearChartOptions"></p-chart>
+        </div>
+    </div>
+    <div class="col-12 lg:col-6">
+        <div class="card flex flex-column align-items-center">
+            <h5>Project availability </h5>
+            <p-chart type="doughnut" [data]="doughnutData" [options]="doughnutOptions"
+                [style]="{'width': '50%'}"></p-chart>
+        </div>
+    </div>
+</div>

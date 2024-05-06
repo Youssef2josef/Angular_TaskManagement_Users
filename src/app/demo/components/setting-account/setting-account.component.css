@@ -1,0 +1,37 @@
+.example-card {
+    width: 50%;
+    max-width: auto;
+    max-height: auto;
+    margin: auto;
+    justify-content: center;
+  }
+  
+  mat-card-header {
+    margin: 0 auto;
+  }
+  
+  .example-header-image {
+    background-image: url('https://cdn2.iconfinder.com/data/icons/business-271/141/7-512.png');
+    background-size: cover;
+  }
+  
+  .example-form-fields {
+    padding-bottom: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  
+  .example-form-fields mat-form-field + mat-form-field {
+    margin-left: 10px;
+  }
+  
+  .example-form-fields mat-form-field {
+    width: 40%;
+  }
+  
+  .card-actions-container {
+    display: flex;
+    justify-content: space-evenly;
+  }
+  

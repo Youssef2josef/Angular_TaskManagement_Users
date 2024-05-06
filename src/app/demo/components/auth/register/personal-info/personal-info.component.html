@@ -1,0 +1,43 @@
+<div class="flex flex-column align-items-center justify-content-center h-full py-5 px-3">
+	<i class="pi pi-fw pi-user mr-2 text-2xl"></i>
+	<p class="mt-5 text-center text-lg">Personal Info</p>
+	<div class="col-12 lg:col-8">
+		<div class="card">
+			<div class="p-card-header flex justify-content-center align-items-center mb-5">
+                <button pButton pRipple type="button" icon="pi pi-user-plus" class="p-button-rounded p-button-info"></button>
+				<span class="ml-3">Register</span>
+            </div>
+
+			<form [formGroup]="firstFormGroup">
+				<div class="field grid">
+					<label for="username" class="col-fixed w-9rem">First Name</label>
+					<div class="col flex">
+						<input id="username" type="text" #username pInputText placeholder="First Name"
+							formControlName="firstname" required
+							[ngClass]="{'ng-invalid ng-dirty' : firstFormGroup.controls['firstname'].hasError('required')}">
+						<p-message *ngIf="firstFormGroup.controls['firstname'].hasError('required')" severity="error"
+							text="{{getErrorFirstName()}}" class="w-15rem"></p-message>
+					</div>
+				</div>
+				<div class="field grid">
+					<label for="username" class="col-fixed w-9rem">Last Name</label>
+					<div class="col flex">
+						<input id="username" type="text" #username pInputText placeholder="Last Name"
+							formControlName="lastname" required
+							[ngClass]="{'ng-invalid ng-dirty' : firstFormGroup.controls['lastname'].hasError('required')}">
+						<p-message *ngIf="firstFormGroup.controls['lastname'].hasError('required')" severity="error"
+							text="{{getErrorLastName()}}" class="w-15rem"></p-message>
+					</div>
+				</div>
+				<div class="flex justify-content-end mt-4">
+					<span class="p-buttonset">
+						<button pButton pRipple label="Cancel" disabled="true" icon="pi pi-times"></button>
+                        <button pButton pRipple label="Proceed" icon="pi pi-arrow-right" (click)="proceed()"
+						[disabled]="firstFormGroup.controls['lastname'].hasError('required') ||
+						firstFormGroup.controls['firstname'].hasError('required') "></button>
+					</span>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

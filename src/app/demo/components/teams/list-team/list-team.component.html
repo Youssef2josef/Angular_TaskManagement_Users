@@ -1,0 +1,365 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <div class="my-2">
+                        <button pButton pRipple label="New Team" icon="pi pi-plus" class="p-button-secondary mr-2"
+                            (click)="newTeam()" *ngIf="permission == true"></button>
+                        <button pButton pRipple label="Inactive" icon="pi pi-fw pi-ban" class="p-button-danger"
+                            (click)="inactiveSelectedTeams()" [disabled]="!selectedTeams || !selectedTeams.length"
+                            *ngIf="permission == true"></button>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="right">
+                    <button pButton pRipple label="Employee to Team" icon="pi pi-plus" class="p-button-success mr-2"
+                        (click)="openNew()" *ngIf="permission == true"></button>
+
+                    <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help"
+                        (click)="dt.exportCSV()" *ngIf="permission == true"></button>
+                </ng-template>
+            </p-toolbar>
+
+            <p-table #dt [value]="teams" [columns]="cols" responsiveLayout="scroll" [expandedRowKeys]="expandedRows"
+            [globalFilterFields]="['name','aim','status','creationDate','disponibilite,projectModel.name']"
+            [rows]="5" [paginator]="true" [rowsPerPageOptions]="[5,10,20,30]" [showCurrentPageReport]="true"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+            [(selection)]="selectedTeams" selectionMode="multiple" [rowHover]="true" dataKey="id">
+            <ng-template pTemplate="caption">
+
+                <div class="flex table-header">
+                </div>
+                <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                    <h5 class="m-0">Manage Teams</h5>
+
+                    <span class="block mt-2 md:mt-0 p-input-icon-left">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."
+                            class="w-full sm:w-auto" />
+                    </span>
+                </div>
+
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 3rem">
+                    </th>
+                    <th style="width: 3rem">
+                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                    </th>
+                    <th pSortableColumn="name">Name <p-sortIcon *ngIf="teams" field="name"></p-sortIcon></th>
+                    <th pSortableColumn="aim">Aim <p-sortIcon *ngIf="teams" field="aim"></p-sortIcon></th>
+                    <th pSortableColumn="status">Status <p-sortIcon *ngIf="teams" field="status"></p-sortIcon></th>
+                    <th pSortableColumn="creationDate">Creation Date <p-sortIcon *ngIf="teams" field="creationDate"></p-sortIcon>
+                    </th>
+                    <th pSortableColumn="finishDate">Finish Date <p-sortIcon *ngIf="teams" field="finishDate"></p-sortIcon></th>
+                    <th pSortableColumn="finishDate">Disponibilite <p-sortIcon *ngIf="teams" field="finishDate"></p-sortIcon></th>
+                    <th pSortableColumn="projectModel.name">Project <p-sortIcon *ngIf="teams"
+                            field="projectModel.name"></p-sortIcon></th>
+                    <th>Other Actions</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-team let-expanded="expanded">
+                <tr>
+                    <td>
+                        <button type="button" pButton pRipple [pRowToggler]="team"
+                            class="p-button-text p-button-rounded p-button-plain"
+                            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                    </td>
+                    <td>
+                        <p-tableCheckbox [value]="team"></p-tableCheckbox>
+                    </td>
+                    <td style="width:14%; min-width:10rem;">
+                        <span class="p-column-title">Name</span>
+                        {{ team.name }}
+                    </td>
+                    <td style="width:25%; min-width:13rem;">
+                        <span class="p-column-title">Aim</span>
+                        {{ team.aim }}
+                    </td>
+                    <td style="width:10%; min-width:9rem;">
+                        <span class="p-column-title">Status</span>
+                        <span [class]="team.status ? 'p-badge p-badge-success' : 'p-badge p-badge-danger'">
+                            {{ team.status ? 'Active' : 'Inactive' }}
+                        </span>
+                    </td>
+                    <td style="width:14%; min-width:10rem;">
+                        <span class="p-column-title">Creation Date</span>
+                        {{team.creationDate | date: 'yyyy-MM-dd'}}
+                    </td>
+                    <td style="width:14%; min-width:10rem;">
+                        <span class="p-column-title">Finish Date</span>
+                        <ng-container *ngIf="team.finishDate; else nonTermine">{{ team.finishDate | date:
+                            'yyyy-MM-dd' }}</ng-container>
+                        <ng-template #nonTermine>Non Connus</ng-template>
+                    </td>
+                    <td style="width:14%; min-width:10rem;">
+                        <span class="p-column-title">Disponibilité</span>
+                        <span [class]="!team.finishDate ? 'p-badge p-badge-warn' : 'p-badge p-badge-success'">
+                            {{ !team.finishDate ? 'En cours' : 'Terminé' }}
+                        </span>
+                    </td>
+                    <td style="width:14%; min-width:10rem;">
+                        <span class="p-column-title">Project</span>
+                        {{ team.projectModel?.name ? team.projectModel?.name : 'Non Found' }}
+                    </td>
+                    <td>
+                        <div class="flex">
+                            <button pButton pRipple icon="pi pi-pencil"
+                                class="p-button-rounded p-button-success mr-2" (click)="editTeam(team)"></button>
+                            <button pButton pRipple icon="pi pi-fw pi-ban"
+                                class="p-button-rounded p-button-help mr-2"
+                                (click)="inactiveTeam(team)"></button>
+                            <button pButton pRipple icon="pi pi-check"
+                                class="p-button-rounded p-button-success mr-2"
+                                (click)="finishTimeTeam(team)"></button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="10">There are no teams yet.</td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="rowexpansion" let-team>
+                <tr>
+                    <td colspan="11">
+                        <div class="p-3">
+                            <p-table [value]="team.employees" dataKey="employee.id" responsiveLayout="scroll">
+                                <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="employee.id">Id <p-sortIcon field="employee.id"></p-sortIcon></th>
+                    <th pSortableColumn="employee.firstName">First Name <p-sortIcon field="employee.firstName"></p-sortIcon></th>
+                    <th pSortableColumn="employee.lastName">Last Name <p-sortIcon field="employee.lastName"></p-sortIcon></th>
+                    <th pSortableColumn="employee.email">Email <p-sortIcon field="employee.email"></p-sortIcon></th>
+                    <th pSortableColumn="employee.status">Membership <p-sortIcon field="employee.status"></p-sortIcon></th>
+                    <th pSortableColumn="employee.numTel">Status <p-sortIcon field="employee.numTel"></p-sortIcon></th>
+                    <th pSortableColumn="employee.adresse">Adress <p-sortIcon field="employee.adresse"></p-sortIcon></th>
+                    <th style="width: 4rem"></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-employee>
+                <tr>
+                    <td>{{employee.employee.id}}</td>
+                    <td>{{employee.employee.firstName}}</td>
+                    <td>{{employee.employee.lastName}}</td>
+                    <td>{{employee.employee.email}}</td>
+                    <td><span [class]="employee.status ? 'p-badge p-badge-success' : 'p-badge p-badge-danger'">
+                        {{ employee.status ? 'Active' : 'Inactive' }}
+                    </span></td>
+                    <td>{{employee.employee.numTel}}</td>
+                    <td>{{employee.employee.adresse}}</td>
+
+                    <td><button pButton pRipple icon="pi pi-check"
+                        class="p-button-rounded p-button-success mx-4"
+                        (click)="updateEmployeeStatus(team,employee)"></button></td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="10">There are no employees for this team yet.</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    </td>
+    </tr>
+    </ng-template>
+    </p-table>
+    </div>
+
+    <p-dialog [(visible)]="teamDialog" [style]="{ 'width': '450px', 'height': dialogHeight, 'overflow-y': 'auto' }"
+        header="Team Details" [modal]="true" (scroll)="adjustDialogHeight($event)">
+        <ng-template pTemplate="content">
+            <div class="p-fluid">
+                <form [formGroup]="insertEmployeeForm">
+                    <div class="p-field">
+                        <label for="customEmployee">Type Employee Email</label>
+                        <p-autoComplete id="customEmployee" formControlName="employeeEmail"
+                            [suggestions]="filteredEmployees" field="email" [multiple]="true" [minLength]="1"
+                            (completeMethod)="filterEmployees($event)" placeholder="Type Employee Email"
+                            (onChange)="onEmployeeChange($event)" aria-required="true">
+                            <mat-option *ngFor="let employee of filteredEmployees" [value]="employee">
+                                {{employee.email}}
+                            </mat-option>
+                        </p-autoComplete>
+                    </div>
+                    <div class="p-field">
+                        <label for="teams">Type Team Name</label>
+                        <p-autoComplete id="teams" formControlName="teamName" [suggestions]="filteredTeams" field="name"
+                            [multiple]="false" [minLength]="1" (completeMethod)="filterTeams($event)"
+                            placeholder="Type Team Name" (onChange)="onTeamChange($event)" aria-required="true">
+                            <mat-option *ngFor="let team of filteredTeams" [value]="team">
+                                {{team.name}}
+                            </mat-option>
+                        </p-autoComplete>
+                    </div>
+                </form>
+
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                (click)="hideDialog()"></button>
+            <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveTeam()"></button>
+        </ng-template>
+    </p-dialog>
+
+    <p-dialog [(visible)]="editTeamDialog" [style]="{ 'width': '450px'}" header="Team Details" [modal]="true">
+        <ng-template pTemplate="content">
+            <div class="p-fluid">
+                <form #editTeamForm="ngForm">
+                    <div class="p-field" *ngIf="team">
+                        <label for="editName">Name</label>
+                        <input id="editName" pInputText type="text" required [(ngModel)]="team.name"
+                            [ngModelOptions]="{standalone: true}">
+                        <small class="ng-dirty ng-invalid" *ngIf="submitted && !team.name">Name is required.</small>
+                    </div>
+                    <div class="p-field" *ngIf="!team">
+                        <label for="editName">Name</label>
+                        <input id="editName" pInputText type="text" placeholder="team non trouvé">
+                    </div>
+                    <div class="p-field" *ngIf="team">
+                        <label for="editAim">Aim</label>
+                        <textarea id="editAim" pInputText type="text" required [(ngModel)]="team.aim"
+                            [ngModelOptions]="{standalone: true}" required rows="3" cols="20"></textarea>
+                        <small class="ng-dirty ng-invalid" *ngIf="submitted && !team.aim">Aim is required.</small>
+                    </div>
+                    <div class="p-field" *ngIf="!team">
+                        <label for="editAim">Aim</label>
+                        <input id="editAim" pInputText type="text" placeholder="team non trouvé">
+                    </div>
+                    <div class="p-field my-2" *ngIf="team">
+                        <label for="status">Status</label>
+                        <div class="formgrid grid my-2">
+                            <div class="field-radiobutton col-6">
+                                <p-radioButton id="active" name="status" [value]="true"
+                                    (ngModelChange)="onStatusChange($event)" [(ngModel)]="team.status"
+                                    [ngModelOptions]="{standalone: true}"></p-radioButton>
+                                <label for="true">Active</label>
+                            </div>
+                            <div class="field-radiobutton col-6">
+                                <p-radioButton id="inactive" name="status" [value]="false"
+                                    (ngModelChange)="onStatusChange($event)" [(ngModel)]="team.status"></p-radioButton>
+                                <label for="false">Inactive</label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                (click)="hideEditDialog()"></button>
+            <button pButton pRipple label="Update" icon="pi pi-check" class="p-button-text"
+                (click)="updateTeam()"></button>
+        </ng-template>
+    </p-dialog>
+
+    <p-dialog [(visible)]="newTeamDialog" [style]="{ 'width': '450px'}" header="Team Details" [modal]="true">
+        <ng-template pTemplate="content">
+            <div class="p-fluid">
+                <form #addTeamForm="ngForm">
+                    <div class="p-field">
+                        <label for="firstName">Manager First Name</label>
+                        <input id="firstName" pInputText type="text" required [(ngModel)]="manager.firstName"
+                            [ngModelOptions]="{standalone: true}" disabled>
+                    </div>
+                    <div class="p-field">
+                        <label for="lastName">Manager Last Name</label>
+                        <input id="lastName" pInputText type="text" required [(ngModel)]="manager.lastName"
+                            [ngModelOptions]="{standalone: true}" disabled>
+                    </div>
+                    <div class="p-field">
+                        <label for="email">Manager Email</label>
+                        <input id="email" pInputText type="text" required [(ngModel)]="manager.email"
+                            [ngModelOptions]="{standalone: true}" disabled>
+                    </div>
+                </form>
+                <form [formGroup]="addTeamFormV">
+                    <div class="p-field">
+                        <label for="editName">Team Name</label>
+                        <input id="editName" pInputText type="text" formControlName="teamName" required>
+                    </div>
+                    <div class="p-field">
+                        <label for="editName">Team Aim</label>
+                        <textarea id="editName" pInputText type="text" formControlName="aim" required rows="3"
+                            cols="20"></textarea>
+                    </div>
+                </form>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                (click)="hideAddDialog()"></button>
+            <button pButton pRipple label="Add" icon="pi pi-check" class="p-button-text" (click)="addTeam()"></button>
+        </ng-template>
+    </p-dialog>
+
+    <p-dialog [(visible)]="finishTimeTeamDialog" [style]="{ 'width': '450px'}" header="Team Details" [modal]="true">
+        <ng-template pTemplate="content">
+            <div class="p-fluid">
+                <p>
+                    Are you sure you mark the finish of work for team "{{ teamTimeFinish?.name }}"?
+                </p>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                (click)="hideFinishTeamDialog()"></button>
+            <button pButton pRipple label="Update" icon="pi pi-check" class="p-button-text"
+                (click)="confirmFinish()"></button>
+        </ng-template>
+    </p-dialog>
+
+    <p-dialog [(visible)]="employeeStatusTeamDialog" [style]="{ 'width': '450px'}" header="Team Details" [modal]="true">
+        <ng-template pTemplate="content">
+            <div class="p-fluid">
+                <p>
+                    Are you sure you to inactivate "{{ employeeStatus?.employee.firstName }} {{
+                    employeeStatus?.employee.lastName }}" from "{{ teamEmployee?.name }}"?
+                </p>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                (click)="employeeStatusTeamDialog = false"></button>
+            <button pButton pRipple label="Update" icon="pi pi-check" class="p-button-text"
+                (click)="confirmUpdateEmployee(employeeStatus,teamEmployee)"></button>
+        </ng-template>
+    </p-dialog>
+
+    <p-dialog [(visible)]="inactiveTeamDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+        <p>
+            Are you sure you want to inactivate team "{{ inactiveTeamInfo.teamName }}"?
+        </p>
+        <div class="p-dialog-footer">
+            <button pButton type="button" label="Cancel" class="p-button-text"
+                (click)="inactiveTeamDialog = false"></button>
+            <button pButton type="button" label="Confirm" class="p-button-text"
+                (click)="confirmInactiveTeamAction()"></button>
+        </div>
+    </p-dialog>
+
+    <p-dialog [(visible)]="inactiveTeamsDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+        <p>
+            Are you sure you want to continue?
+        </p>
+        <div class="p-dialog-footer">
+            <button pButton type="button" label="Cancel" class="p-button-text"
+                (click)="inactiveTeamsDialog = false"></button>
+            <button pButton type="button" label="Confirm" class="p-button-text"
+                (click)="confirmInactiveSelected()"></button>
+        </div>
+    </p-dialog>
+
+</div>
+</div>

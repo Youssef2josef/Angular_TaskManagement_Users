@@ -1,0 +1,16 @@
+<div class="grid p-fluid">
+    <div class="col-12">
+        <div class="card card-w-title flex flex-wrap">
+            <div class="col-12 md:col-10 h-full">
+                <h5>Register Form</h5>
+                <p-tabMenu styleClass="mb-5" [model]="routeItems"></p-tabMenu>
+
+                <h5>Steps</h5>
+                <p-steps [model]="routeItems" styleClass="mt-5" [readonly]="false"></p-steps>
+            </div>
+            <div class="col-12 md:col-10 h-full">
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </div>
+</div>

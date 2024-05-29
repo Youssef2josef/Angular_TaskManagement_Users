@@ -1,0 +1,13 @@
+.fc-event {
+    margin-bottom: 2px; /* Ajoute un espace entre les événements */
+}
+
+.fc-time-grid-event {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.fc-title, .fc-time {
+    white-space: normal !important; /* Permet aux titres et aux heures de se casser en plusieurs lignes */
+}

@@ -24,7 +24,9 @@ export class AppMenuComponent implements OnInit {
             {
                 label: 'Home',
                 items: [
-                    { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/dashboard'] }
+                    { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/dashboard'] },
+                    { label: 'My Dashboard', icon: 'pi pi-fw pi-clock', routerLink: ['/dashboard/my-dashboard'] }
+
                 ]
             },
             {
@@ -79,7 +81,7 @@ export class AppMenuComponent implements OnInit {
                                 routerLink: ['task/chart']
                             },
                             {
-                                label: 'Your Tasks',
+                                label: 'Tasks',
                                 icon: 'pi pi-fw pi-list',
                                 routerLink: ['task/list']
                             }
@@ -89,17 +91,18 @@ export class AppMenuComponent implements OnInit {
                         label: 'Feedback',
                         icon: 'pi pi-fw pi-exclamation-triangle',
                         items: [
-                            { label: 'Complaints', icon: 'pi pi-fw pi-comment', routerLink: ['/feedback/report'] },
+                            { label: 'Complaints', icon: 'pi pi-fw pi-comment', routerLink: ['/dashboard/reclamation'] },
+                        ]
+                    },
+                    {
+                        label: 'Reports',
+                        icon: 'pi pi-fw pi-comment',
+                        items: [
+                            { label: 'My Reports', icon: 'pi pi-fw pi-file', routerLink: ['/dashboard/report/manager'] },
                         ]
                     }
                 ]
-            },
-            {
-                label: 'Setting',
-                items: [
-                    { label: 'Account', icon: 'pi pi-fw pi-cog', routerLink: ['/dashboard/setting-account'] }
-                ]
-            },
+            }
         ];
         }
         else if(!manager && employee){
@@ -107,7 +110,8 @@ export class AppMenuComponent implements OnInit {
                 {
                     label: 'Home',
                     items: [
-                        { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/dashboard'] }
+                        { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/dashboard'] },
+                        { label: 'My Dashboard', icon: 'pi pi-fw pi-clock', routerLink: ['/dashboard/my-dashboard'] }
                     ]
                 },
                 {
@@ -147,7 +151,7 @@ export class AppMenuComponent implements OnInit {
                             icon: 'pi pi-fw pi-folder',
                             items: [
                                 {
-                                    label: 'Your Tasks',
+                                    label: 'Tasks',
                                     icon: 'pi pi-fw pi-list',
                                     routerLink: ['task/list']
                                 }
@@ -157,16 +161,17 @@ export class AppMenuComponent implements OnInit {
                             label: 'Feedback',
                             icon: 'pi pi-fw pi-exclamation-triangle',
                             items: [
-                                { label: 'Report an Issue', icon: 'pi pi-fw pi-comment', routerLink: ['/feedback/report'] },
-                                { label: 'Give Feedback', icon: 'pi pi-fw pi-pencil', routerLink: ['/feedback/give'] }
+                                { label: 'Report an Issue', icon: 'pi pi-fw pi-comment', routerLink: ['/dashboard/reclamation'] },
+                                { label: 'Write a report', icon: 'pi pi-fw pi-pencil', routerLink: ['/dashboard/report'] }
+                            ]
+                        },
+                        {
+                            label: 'Reports',
+                            icon: 'pi pi-fw pi-comment',
+                            items: [
+                                { label: 'My Reports', icon: 'pi pi-fw pi-file', routerLink: ['/dashboard/report'] },
                             ]
                         }
-                    ]
-                },
-                {
-                    label: 'Setting',
-                    items: [
-                        { label: 'Account', icon: 'pi pi-fw pi-cog', routerLink: ['/dashboard/setting-account'] }
                     ]
                 },
             ];

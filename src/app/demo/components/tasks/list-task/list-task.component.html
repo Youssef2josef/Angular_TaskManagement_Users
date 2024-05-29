@@ -65,7 +65,7 @@
                                 field="finish"></p-sortIcon></th>
                         <th pSortableColumn="project.name">Project <p-sortIcon *ngIf="tasks"
                                 field="project.name"></p-sortIcon></th>
-                        <th>Other Actions</th>
+                        <th *ngIf="permission == true">Other Actions</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-task let-expanded="expanded">
@@ -110,14 +110,14 @@
                             <span class="p-column-title">Project</span>
                             {{ task.project?.name ? task.project?.name : 'Non Found' }}
                         </td>
-                        <td>
+                        <td *ngIf="permission == true">
                             <div class="flex">
                                 <button pButton pRipple icon="pi pi-pencil"
-                                    class="p-button-rounded p-button-success mr-2" (click)="editTask(task)"></button>
-                                <button pButton pRipple icon="pi pi-fw pi-ban"
+                                    class="p-button-rounded p-button-success mr-2" *ngIf="permission == true" (click)="editTask(task)"></button>
+                                <button pButton pRipple icon="pi pi-fw pi-ban" *ngIf="permission == true"
                                     class="p-button-rounded p-button-help mr-2" (click)="inactiveTask(task)"></button>
                                 <button pButton pRipple icon="pi pi-check"
-                                    class="p-button-rounded p-button-success mr-2"
+                                    class="p-button-rounded p-button-success mr-2" *ngIf="permission == true"
                                     (click)="finishTimeTask(task)"></button>
                             </div>
                         </td>

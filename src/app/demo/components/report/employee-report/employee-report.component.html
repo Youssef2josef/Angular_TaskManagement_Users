@@ -1,0 +1,106 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <div class="my-2">
+                        <button pButton pRipple label="Generate New report" icon="pi pi-plus" class="p-button-success mr-2"
+                            (click)="openNew()"></button>
+                    </div>
+                </ng-template>
+            </p-toolbar>
+
+            <p-table #dt [value]="reports" styleClass="p-datatable-gridlines" [columns]="cols" responsiveLayout="scroll"
+                [globalFilterFields]="['id','user.email','user.firstName','user.lastName','dateCreation']"
+                [rows]="5" [paginator]="true" [rowsPerPageOptions]="[5,10,20,30]" [showCurrentPageReport]="true"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [rowHover]="true" dataKey="id">
+                <ng-template pTemplate="caption">
+                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                        <h5 class="m-0">Reports</h5>
+                        <span class="block mt-2 md:mt-0 p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."
+                                class="w-full sm:w-auto" />
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="id">ID <p-sortIcon *ngIf="reports" field="id"></p-sortIcon></th>
+                        <th>User Email</th>
+                        <th>User First Name</th>
+                        <th>User Last Name</th>
+                        <th pSortableColumn="dateCreation">Creation Date <p-sortIcon *ngIf="reports" field="dateCreation"></p-sortIcon></th>
+                        <th>Action</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-report>
+                    <tr>
+                        <td style="width:17%; min-width:10rem;">
+                            <span class="p-column-title">ID</span>
+                            {{ report.id }}
+                        </td>
+                        <td style="width:17%; min-width:10rem;">
+                            <span class="p-column-title">User Email</span>
+                            {{ report.user.email }}
+                        </td>
+                        <td style="width:17%; min-width:10rem;">
+                            <span class="p-column-title">User First Name</span>
+                            {{ report.user.firstName }}
+                        </td>
+                        <td style="width:17%; min-width:10rem;">
+                            <span class="p-column-title">User Last Name</span>
+                            {{ report.user.lastName }}
+                        </td>
+                        <td style="width:15%; min-width:10rem;">
+                            <span class="p-column-title">Creation Date</span>
+                            <ng-container *ngIf="report.dateCreation; else nonTermine">{{report.dateCreation | date:
+                                'yyyy-MM-dd HH:mm'}}</ng-container>
+                            <ng-template #nonTermine>Not Found</ng-template>
+                        </td>
+                        <td style="width:15%; min-width:10rem; text-align: center;">
+                            <button pButton pRipple icon="pi pi-download"
+                                class="p-button-rounded p-button-info m-2 p-1" (click)="downloadReport(report.id,report)"></button>
+                        </td>
+                        
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="10">There are no reports for you yet.</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            
+        </div>
+
+        <p-dialog [(visible)]="reportDialog" [style]="{width: '450px'}" header="Report Details" [modal]="true"
+            class="p-fluid">
+            <ng-template pTemplate="content">
+                <div class="p-fluid">
+                    <form [formGroup]="addReport">
+                        <div>
+                            <label for="timeStart">Start Time:</label>
+                            <input type="datetime-local" id="timeStart" formControlName="timeStart" required>
+                          </div>
+                          <div>
+                            <label for="timeEnd">End Time:</label>
+                            <input type="datetime-local" id="timeEnd" formControlName="timeEnd" required>
+                          </div>
+                          
+                    </form>
+                </div>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                    (click)="reportDialog=false"></button>
+                <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"
+                    (click)="save()"></button>
+            </ng-template>
+        </p-dialog>
+
+    </div>
+</div>

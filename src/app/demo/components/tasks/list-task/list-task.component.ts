@@ -271,6 +271,7 @@ export class ListTaskComponent implements OnInit {
                 this.taskDialog = false;
                 this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Task created', life: 3000 });
                 this.tasks.push(response);
+                
             },
             (error) => {
                 console.log(error);
@@ -292,9 +293,10 @@ export class ListTaskComponent implements OnInit {
             name: this.editingTask?.name,
             projectName: this.editingTask?.project?.name,
             status: this.editingTask?.status,
-            token: this.authToken
         }
-        this.taskManagerService.editTask(formData).subscribe(
+        console.log(this.editingTask);
+
+        this.taskManagerService.editTask(formData,this.authToken||"").subscribe(
             (response) =>{
                 const index = this.tasks.findIndex(t => t.id === response.id);
                 if (index !== -1) {
@@ -326,7 +328,7 @@ export class ListTaskComponent implements OnInit {
                 employeeEmail: this.insertEmployeeForm.value.employeeEmail,
                 taskName: this.insertEmployeeForm.value.taskName.name,
                 coefficient: this.insertEmployeeForm.value.coefficient,
-                token: ""
+                token: this.authToken,
             }
             console.log(formData);
             this.taskEmployeeService.insertUserToTask(formData,token).subscribe(
@@ -339,6 +341,12 @@ export class ListTaskComponent implements OnInit {
                     console.log(response);
                     this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'You have chosen task successfully', life: 3000 });
                     this.insertEmployeeForm.reset();
+                    setTimeout(() => {
+                        this.messageService.add({ severity: 'warn', summary: 'Warning', detail: 'Please refresh the page to synchronize changes', life: 2000 });
+                        setTimeout(() => {
+                            window.location.reload();
+                        },3500);
+                    }, 500);
                 },
                 (error) => {
                     console.log(error);
@@ -365,6 +373,14 @@ export class ListTaskComponent implements OnInit {
                 console.log(response);
                 this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'You have chosen task successfully', life: 3000 });
                 this.insertEmployeeForm.reset();
+                setTimeout(() => {
+                    this.messageService.add({ severity: 'warn', summary: 'Warning', detail: 'Please refresh the page to synchronize changes', life: 3000 });
+                    setTimeout(() => {
+                        window.location.reload();
+    
+                    },2000);
+                }, 500);
+                
             },
             (error) => {
                 console.log(error);

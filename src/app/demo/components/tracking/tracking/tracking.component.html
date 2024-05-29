@@ -1,0 +1,7 @@
+<div class="calendar-controls">
+    <button pButton pRipple type="button" label="Afficher jours ouvrables" class="p-button-raised mr-2 mb-2" (click)="showWorkWeek()">
+    </button>
+    <button pButton pRipple type="button" label="Afficher semaine complète" class="p-button-raised mr-2 mb-2"  (click)="resetView()">
+        </button>
+</div>
+<full-calendar [options]="calendarOptions"></full-calendar>

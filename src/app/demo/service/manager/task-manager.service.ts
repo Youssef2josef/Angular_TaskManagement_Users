@@ -30,8 +30,8 @@ export class TaskManagerService {
     );
   }
 
-  editTask(editTask:any): Observable<any> {
-    return this.http.put(`${this.taskUrl}/edit`, editTask).pipe(
+  editTask(editTask:any,token:string): Observable<any> {
+    return this.http.put(`${this.taskUrl}/edit?token=`+token, editTask).pipe(
       catchError(this.handleError)
     );
   }

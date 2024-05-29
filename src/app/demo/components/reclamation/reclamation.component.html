@@ -1,1 +1,105 @@
-<p>reclamation works!</p>
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <div class="my-2">
+                        <button pButton pRipple label="New Reclamation" icon="pi pi-plus" class="p-button-success mr-2"
+                            (click)="openNew()" *ngIf="permission == true"></button>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="right">
+                    <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help"
+                        (click)="dt.exportCSV()"></button>
+                </ng-template>
+            </p-toolbar>
+
+            <p-table #dt [value]="reclamations" styleClass="p-datatable-gridlines" [columns]="cols" responsiveLayout="scroll"
+                [globalFilterFields]="['name','description','creationTime','emailManager']"
+                [rows]="5" [paginator]="true" [rowsPerPageOptions]="[5,10,20,30]" [showCurrentPageReport]="true"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [rowHover]="true" dataKey="id">
+                <ng-template pTemplate="caption">
+                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                        <h5 class="m-0">Reclamations</h5>
+                        <span class="block mt-2 md:mt-0 p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."
+                                class="w-full sm:w-auto" />
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th >Name </th>
+                        <th >Description</th>
+                        <th >Creation Date
+                        </th>
+                        <th >Manager</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-reclamation>
+                    <tr>
+                        <td style="width:17%; min-width:10rem;">
+                            <span class="p-column-title">Name</span>
+                            {{ reclamation.nom }}
+                        </td>
+                        <td style="width:17%; min-width:10rem;">
+                            <span class="p-column-title">Description</span>
+                            {{ reclamation.description }}
+                        </td>
+                        
+                        <td style="width:15%; min-width:10rem;">
+                            <span class="p-column-title">Creation Date</span>
+                            <ng-container *ngIf="reclamation.creationDate; else nonTermine">{{reclamation.creationDate | date:
+                                'yyyy-MM-dd'}}</ng-container>
+                            <ng-template #nonTermine>Not Found</ng-template>
+                        </td>
+                        <td style="width:17%; min-width:10rem;">
+                            <span class="p-column-title">Manager</span>
+                            {{ reclamation.manager.email }}
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="10">There are no reclamations yet.</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            
+        </div>
+
+        <p-dialog [(visible)]="reclamationDialog" [style]="{width: '450px'}" header="Reclamation Details" [modal]="true"
+            class="p-fluid">
+            <ng-template pTemplate="content">
+                <div class="p-fluid">
+                    <form [formGroup]="addReclamation">
+                        <div class="p-field">
+                            <label for="Name">Name</label>
+                            <input id="firstName" pInputText type="text" formControlName="nom" required>
+                        </div>
+                        <div class="p-field">
+                            <label for="editName">Description</label>
+                            <input id="editName" pInputText type="text" formControlName="description" required>
+                        </div>
+                        <div class="p-field">
+                            <label for="editName">Manager</label>
+                            <input id="editName" pInputText type="text" formControlName="managerEmail" required>
+                        </div>
+                    </form>
+                </div>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                    (click)="reclamationDialog=false"></button>
+                <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"
+                    (click)="saveReclamation()"></button>
+            </ng-template>
+        </p-dialog>
+
+    </div>
+</div>

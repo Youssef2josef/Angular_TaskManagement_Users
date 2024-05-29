@@ -30,6 +30,7 @@ export class AuthManagerGuard implements CanActivate {
         confirmButtonText: 'OK',
         timer: 3500
       });
+      sessionStorage.clear();
       this.router.navigate(['']);
       return false;
     }

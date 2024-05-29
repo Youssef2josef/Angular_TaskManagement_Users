@@ -142,7 +142,7 @@
             </ng-template>
         </p-dialog>
 
-        <p-dialog [(visible)]="editProjectsDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+        <p-dialog [(visible)]="editProjectsDialog" header="Edit project" [modal]="true" [style]="{width:'450px'}">
             <ng-template pTemplate="content">
                 <div class="p-fluid">
                     <form #editProjectForm="ngForm">
@@ -277,7 +277,7 @@
                             <p-autoComplete id="teams" formControlName="teamName" [suggestions]="filteredTeams"
                                 field="name" [multiple]="true" [minLength]="1" (completeMethod)="filterTeams($event)"
                                 placeholder="Type Team Name" (onChange)="onTeamChange($event)" aria-required="true">
-                                <mat-option *ngFor="let team of filteredTeams" [value]="team">
+                                <mat-option *ngFor="let team of filteredTeams" [value]="team" !>
                                     {{team.name}}
                                 </mat-option>
                             </p-autoComplete>

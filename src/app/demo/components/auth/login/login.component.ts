@@ -101,7 +101,7 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
 
     this.validateToken();
-    if (sessionStorage.getItem("IsLoggedIn") == "true") {
+    if (sessionStorage.getItem("IsLoggedIn") == "true" ||(localStorage.getItem("email") && localStorage.getItem("auth-token"))) {
       this.router.navigate(["dashboard"])
     }
 
@@ -119,7 +119,7 @@ export class LoginComponent implements OnInit {
       email: ["", [Validators.email, Validators.required]],
       password: ["", [Validators.required, Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/)]],
       option: [false],
-      userType: ["employee"]
+      userType: [""]
     })
 
     this.keyVerification = this.formBuilder.group({
@@ -189,6 +189,7 @@ export class LoginComponent implements OnInit {
   login() {
     //console.log(this.loginForm.value);
     if (this.loginForm.value.userType == "manager") {
+      console.log("manager");
       sessionStorage.setItem("role", "Manager");
       const managerLoginData = {
         email: this.loginForm.value.email,
@@ -197,7 +198,7 @@ export class LoginComponent implements OnInit {
       }
       console.log(managerLoginData);
       this.authService.login(managerLoginData).subscribe((data: any) => {
-        //console.log(data);
+        console.log(data);
         if (data.status == 200) {
           sessionStorage.setItem("option", this.loginForm.value.option);
           this.response = data
@@ -233,6 +234,7 @@ export class LoginComponent implements OnInit {
         }
       });
     } else if (this.loginForm.value.userType == "employee") {
+      console.log("employee");
       sessionStorage.setItem("role", "Employee");
       const employeeLoginData = {
         email: this.loginForm.value.email,

@@ -50,7 +50,7 @@ export class TeamManagerService {
   }
 
   updateTeam(team:any,token:string): Observable<any> {
-    return this.http.put(this.teamUrl+"/edit",team+"?token="+token).pipe(
+    return this.http.put(this.teamUrl+"/edit?token="+token,team).pipe(
       catchError(this.handleError)
     );
   }

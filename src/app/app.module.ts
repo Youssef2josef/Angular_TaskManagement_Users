@@ -41,10 +41,15 @@ import { ProjectComponent } from './demo/components/project/project.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
 import { MatMenuModule } from '@angular/material/menu';
+import { RapportComponent } from './demo/components/rapport/rapport.component';
+import { FullCalendarModule } from '@fullcalendar/angular';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
 
 @NgModule({
     declarations: [
-        AppComponent, NotfoundComponent, MydashboardComponent, ProjectComponent,
+        AppComponent, NotfoundComponent, MydashboardComponent, ProjectComponent, RapportComponent,
     ],
     imports: [
         AppRoutingModule,

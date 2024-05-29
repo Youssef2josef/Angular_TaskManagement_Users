@@ -1,3 +1,4 @@
+import { ReclamationModuleModule } from './demo/components/reclamation/reclamation.module';
 import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { NotfoundComponent } from './demo/components/notfound/notfound.component';
@@ -18,12 +19,13 @@ import { AuthManagerGuard } from './demo/service/auth-manager.guard';
                     { path: 'blocks', loadChildren: () => import('./demo/components/primeblocks/primeblocks.module').then(m => m.PrimeBlocksModule) },
                     { path: 'pages', loadChildren: () => import('./demo/components/pages/pages.module').then(m => m.PagesModule) },
                     // New Update Template
-                    { path: 'mydashboard', component: MydashboardComponent },
+                    //{ path: 'mydashboard', component: MydashboardComponent },
+                    { path: 'my-dashboard', loadChildren: () => import('./demo/components/tracking/tracking.module').then(m => m.TrackingModule) },
                     { path: 'team', loadChildren: () => import('./demo/components/teams/teams.module').then(m => m.TeamsModule) },
                     { path: 'project', loadChildren: () => import('./demo/components/project/project.module').then(m => m.ProjectModule) },
                     { path: 'task', loadChildren: () => import('./demo/components/tasks/tasks.module').then(m => m.TasksModule) },
-                    { path: 'setting-account', loadChildren: () => import('./demo/components/setting-account/setting-acount.module').then(m => m.SettingAcountModule) },
-
+                    { path: 'reclamation', loadChildren: () => import('./demo/components/reclamation/reclamation.module').then(m => m.ReclamationModuleModule) },
+                    { path: 'report', loadChildren: () => import('./demo/components/report/report.module').then(m => m.ReportModule) },
                     //{ path: 'demo-support', loadChildren: () => import('./demo/components/demo/demo.module').then(m => m.DemoModule) },
                 ],
             },
